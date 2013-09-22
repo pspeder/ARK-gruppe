@@ -16,33 +16,33 @@
 	.text
 
 main:
-  addi $t0, $zero, 7		# build list on heap
-  sw   $t0, 0($gp)
-  addi $t0, $zero, 12
-  sw   $t0, 4($gp)
-  addi $t0, $zero, -2
-  sw   $t0, 8($gp)
-  sw   $zero, 12($gp)
-  addi $t0, $zero, 4
-  sw   $t0, 16($gp)
-  addi $t0, $zero, 10
-  sw   $t0, 20($gp)
-
-  add  $a0, $zero, $gp		# set list as an argument
+#  addi $t0, $zero, 7		# build list on heap as you normally would
+#  sw   $t0, 0($gp)
+#  addi $t0, $zero, 12
+#  sw   $t0, 4($gp)
+#  addi $t0, $zero, -2
+#  sw   $t0, 8($gp)
+#  sw   $zero, 12($gp)
+#  addi $t0, $zero, 4
+#  sw   $t0, 16($gp)
+#  addi $t0, $zero, 10
+#  sw   $t0, 20($gp)
+  la   $a0, array			# set list as an argument
   addi $a1, $zero, 0		# set l argument
-  addi $a2, $zero, 5		# set r argument
+  addi $a2, $zero, 7		# set r argument
 
   jal  quicksort			# run quicksort
-  jal  callPrint 			# Print sorted array
+  nop
+  jal  callPrint 			# print sorted array
   j done					# terminate
   
 #demonstrerer brugen af print
 callPrint:
-	la $a0, array
-	addi $a1, $zero, 7      # let a0 = no of items in array
-	jal print
-	li $v0, 10				# 'exit' system call
-	syscall
+	la   $a0, array           # load sorted array into $a0
+	addi $a1, $zero, 7      # let a1 = no of items in array
+	jal  print              # jump to printing
+	li   $v0, 10			# 'exit' system call
+	syscall                 # execute
 
 quicksort:
   slt  $t0, $a1, $a2		# is l < r
@@ -181,7 +181,7 @@ printSingleNumber:	#a0 er int der skal printes
 	
 positive: #when we come here the number is positive
 	addi $t2, $zero, 1000000000
-	move $t4, $zero	#bruges som flag til at teste om 
+	move $t4, $zero				#bruges som flag til at teste om 
 	# Loop and see if t2 is != 0, otherwise keep looping
 startPositiveLoop:
 	beqz $t2, exitPositiveLoop
@@ -189,20 +189,20 @@ startPositiveLoop:
 	mflo $t3
 	mfhi $t1
 	beq  $t3, $t4, skipZero
-	addi $t4, $t4, -1 # er nu under 0 og skip ville ikke blive taget
-	addi $t3, $t3, 48 # ascii 0
-	sb $t3, 0($t5)
+	addi $t4, $t4, -1 			# er nu under 0 og skip ville ikke blive taget
+	addi $t3, $t3, 48 			# ascii 0
+	sb 	 $t3, 0($t5)
 	addi $t5, $t5, 1
 skipZero:	
 	divu $t2, $t2, 10
-	j startPositiveLoop
+	j 	 startPositiveLoop
 exitPositiveLoop:
-	sb $zero, ($t5)			# null terminer
+	sb   $zero, ($t5)			# null terminer
 	move $a0, $sp			# Print tal
-	li $v0, 4
+	li   $v0, 4
 	syscall
 	
 	addi $sp, $sp, 12
-	jr $ra
+	jr   $ra
 	
 done: 					# 'exit' program
